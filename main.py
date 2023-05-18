@@ -1,26 +1,26 @@
 class Perceptron(object):
-    def __init__(self,inputs,logicport="none", weights=0,bias = 0,output=0):
+    def __init__(self,inputs,logicport="none", weights=[],bias = 0,output=0):
         logicport.casefold()
         self.logicport = logicport
         self.inputs = inputs
         match logicport:
             case "not":
-                self.weights=-1
+                self.weights=[-1]
                 self.bias = 1
             case "and": 
-                self.weights = 1
+                self.weights = [1]
                 self.bias = -1
             case "or": 
-                self.weights = 2
+                self.weights = [2]
                 self.bias = -1
             case "nor":
-                self.weights = -1
+                self.weights = [-1]
                 self.bias = 1
             case "nand":
-                self.weights = -1
+                self.weights = [-1]
                 self.bias = 2
             case "buffer":
-                self.weights = 1
+                self.weights = [1]
                 self.bias = 0
             case "none":
                 self.weights = weights
@@ -31,8 +31,14 @@ class Perceptron(object):
    
     def act_fn(self,input):
         dotproduct = int(0)
-        for i in input:
-            dotproduct = int(i) * self.weights + dotproduct
+        temp = len(input) - len(self.weights)
+        while temp > 0 :
+            self.weights.append(0)
+            temp -= 1
+
+        
+        for i,j in enumerate(input):
+            dotproduct = int(j) * self.weights[i] + dotproduct
 
         if dotproduct+self.bias > 0:
             self.output = 1
@@ -79,6 +85,7 @@ xor=PerceptronNetwork([PerceptronLayer([Perceptron(2,"or"),Perceptron(2,"nand")]
 print(xor)
 xor.feedforward([1,1])
 print(xor)
+
 
 
 
