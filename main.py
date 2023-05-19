@@ -33,7 +33,7 @@ class Perceptron(object):
         dotproduct = int(0)
         temp = len(input) - len(self.weights)
         while temp > 0 :
-            self.weights.append(0)
+            self.weights.append(self.weights[0])
             temp -= 1
 
         
@@ -85,6 +85,7 @@ xor=PerceptronNetwork([PerceptronLayer([Perceptron(2,"or"),Perceptron(2,"nand")]
 print(xor)
 xor.feedforward([1,1])
 print(xor)
+halfadder=PerceptronNetwork([PerceptronLayer([Perceptron(2, "buffer", [1,0]),Perceptron(2,"nand")])])
 
 
 
