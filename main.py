@@ -83,7 +83,7 @@ class PerceptronNetwork(object):
 twoinput=[1,1]
 xor=PerceptronNetwork([PerceptronLayer([Perceptron(2,"or"),Perceptron(2,"nand")]),PerceptronLayer([Perceptron(2,"and")])])
 
-halfadder=PerceptronNetwork([PerceptronLayer([Perceptron(2, s"none", [1,0]),Perceptron(2,"nand"),Perceptron(2,"none",[0,1])]),PerceptronLayer([Perceptron(3,"none",[-1,-1,0],2),Perceptron(3,"none",[0,-1,-1],2),Perceptron(3,"none",[0,1,0],0)]),PerceptronLayer([Perceptron(3,"none",[-1,-1,0],2),Perceptron(3,"none",[0,0,-1],1)])])
+halfadder=PerceptronNetwork([PerceptronLayer([Perceptron(2,"none", [1,0]),Perceptron(2,"nand"),Perceptron(2,"none",[0,1])]),PerceptronLayer([Perceptron(3,"none",[-1,-1,0],2),Perceptron(3,"none",[0,-1,-1],2),Perceptron(3,"none",[0,1,0],0)]),PerceptronLayer([Perceptron(3,"none",[-1,-1,0],2),Perceptron(3,"none",[0,0,-1],1)]) ])
 
 halfadder.feedforward([0,0])
 
