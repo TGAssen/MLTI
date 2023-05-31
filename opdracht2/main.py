@@ -7,11 +7,12 @@ class Perceptron(object):
         self.weights=weights
         self.bias = bias
         self.output = output
+        self.errorlist=[]
         
     def update(self,target,input):
         error = target - self.output
         n=0.1 #correctionstep
-
+        self.errorlist.append(error)
         for i,j in enumerate(self.weights):
 
             deltaweight = n*error*input[i]
@@ -22,7 +23,11 @@ class Perceptron(object):
         return self.output
         
     def loss(self):
-        pass
+        mse=0
+        for i in self.errorlist:
+            mse+=i*i/ len(self.errorlist)
+        self.errorlist.clear()
+        return mse
 
     def act_fn(self,input):
         dotproduct = int(0)
@@ -79,6 +84,8 @@ def train(epochs,p,testinput,testresult):
         for i,j in enumerate(testinput):
             p.act_fn(j)
             p.update(testresult[i],j)
+        p.loss()
+
         epochs-=1
 
 
