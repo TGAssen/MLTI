@@ -49,7 +49,7 @@ class Neuron(object):
     
 
     def __str__(self):
-        return "Perceptron with weights: "+ str(self.weights) + " and bias: " + str(self.bias)
+        return "Neuron with weights: "+ str(self.weights) + " and bias: " + str(self.bias)
 
 class NeuronLayer(object):
     def __init__(self, neurons):
@@ -58,6 +58,7 @@ class NeuronLayer(object):
     def __str__(self):
         for i in self.neurons:
             print(i)
+        return "end of layer"
 
     def generateOutput(self,input):
         output=[]
@@ -71,7 +72,8 @@ class NeuronNetwork(object):
     
     def __str__(self):
         print("start neuron network: ")
-        print(self.layers[-1])
+        for i in self.layers:
+            print(i)
         return "end of network"
 
     def feedForward(self,input):
@@ -90,10 +92,10 @@ def train(epochs,n,testinput,testresult):
         epochs-=1
 def run(n,input):
     for i in input:
-        print(n.act_fn(i))
+        n.act_fn(i)
 
 
-input1 = [1,0]
+input1 = [[1],[0]]
 input2 = [[1,1],[1,0],[0,1],[0,0]]
 input3 = [[1,1,1],[1,1,0],[1,0,1],[1,0,0],[0,1,1],[0,1,0],[0,0,1],[0,0,0]]
 neuronand = Neuron([1,1],1)
@@ -104,6 +106,16 @@ run(neuronand,input2)
 run(neuronnot,input1)
 run(neuronor,input2)
 run(neuronnor,input3)
+
+halfadder=NeuronNetwork([NeuronLayer([Neuron([1,0],0),Neuron([-1,-1],2),Neuron([0,1],0)]),NeuronLayer([Neuron([-1,-1,0],2),Neuron([0,-1,-1],2),Neuron([0,1,0],0)]),NeuronLayer([Neuron([-1,-1,0],2),Neuron([0,0,-1],1)]) ])
+
+
+for i in input2:
+    halfadder.feedForward(i)
+
+print(halfadder)
+
+
 
 
 """ seed(1667889)
