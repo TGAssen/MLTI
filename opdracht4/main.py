@@ -11,7 +11,7 @@ class Neuron(object):
         self.error = float(0)
         self.input = []
         self.wdelta= []
-        self.n = float(0.1)     #correction step
+        self.n = float(0.15)     #correction step
     
     """ Als je een default lijst meegeeft in de initiatie parameters, word deze gedeeld tussen alle objecten die geen lijst meekrijgen.
     Zodoende worden de weights dan door alle neuronen gebruikt tenzij vooraf gedefinieerd. 
@@ -19,6 +19,7 @@ class Neuron(object):
     def setWeights(self,weights):
         self.weights=weights
 
+#calculating the error
     def calcError(self,prev_error,target=0):
         self.wdelta.clear()
         # Error calculation for a hidden layer
@@ -35,13 +36,13 @@ class Neuron(object):
         for i in self.input:
             self.wdelta.append(i*self.error*self.n)
         return self.error
- 
+ #update function
     def update(self):
         for i in range(len(self.weights)):
             self.weights[i] -= self.wdelta[i]
         self.bias -= self.n * self.error
         return 0
-        
+ #activation function which also fills the neuron with weights on the first call.        
     def act_fn(self,input):
         self.input = input
         dotproduct = int(0)
@@ -49,6 +50,7 @@ class Neuron(object):
         #Match the amount of weights to the amount of inputs.
         temp = len(input) - len(self.weights)
         seed(1667889)
+        #fill the weightlist with random weights
         while temp > 0 :
             self.weights.append(randint(-2,2))
             if temp == 1:
@@ -57,7 +59,7 @@ class Neuron(object):
         #Calculate the dotproduct
         for i in range(len(input)):
             dotproduct += input[i] * self.weights[i]
-        #Rest of the activation function
+        #Sigmoid activation function
         self.output = 1 -(1/(1+math.e**(dotproduct+self.bias)))
         return self.output
 
@@ -126,6 +128,7 @@ class NeuronNetwork(object):
                     errorlist = j.calculateErrors(errorlist,target[i])
                 for j in reversed(self.layers):
                     j.updateNeurons()
+            print(p,"/",epochs,"epochs ",)
 
 
 

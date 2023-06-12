@@ -28,13 +28,17 @@ test_labels= one_hot_encoder.transform(test_labels)
 #model based on textbook 3.3.1
 model= tf.keras.Sequential()
 model.add(tf.keras.layers.Conv2D(16,(3,3),activation='relu',padding='same', input_shape=(32,32,1)))
-for m in range(3):
-    
-    for n in range(2):
-        model.add(tf.keras.layers.Conv2D((32*(n+1)),(3,3),activation='relu',padding='same'))
-    model.add(tf.keras.layers.MaxPooling2D((2,2)))
+model.add(tf.keras.layers.Conv2D(32,(3,3),activation='relu',padding='same'))
+model.add(tf.keras.layers.Conv2D(64,(3,3),activation='relu',padding='same'))
+model.add(tf.keras.layers.MaxPooling2D((2,2)))
+model.add(tf.keras.layers.Conv2D(16,(3,3),activation='relu',padding='same'))
+model.add(tf.keras.layers.Conv2D(32,(3,3),activation='relu',padding='same'))
+model.add(tf.keras.layers.Conv2D(64,(3,3),activation='relu',padding='same'))
+model.add(tf.keras.layers.MaxPooling2D((2,2)))
+
 model.add(tf.keras.layers.Flatten())
 model.add(tf.keras.layers.Dense(256,activation='relu'))
+#helps against overfitting
 model.add(tf.keras.layers.Dropout(0.5))
 model.add(tf.keras.layers.Dense(128,activation='relu'))
 model.add(tf.keras.layers.Dense(64,activation='relu'))
@@ -54,6 +58,7 @@ plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.ylim([0.5,1])
 plt.legend(loc='lower right')
+plt.show()
 test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
 print(test_acc)
 
