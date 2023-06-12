@@ -15,7 +15,7 @@ class Neuron(object):
     
     """ Als je een default lijst meegeeft in de initiatie parameters, word deze gedeeld tussen alle objecten die geen lijst meekrijgen.
     Zodoende worden de weights dan door alle neuronen gebruikt tenzij vooraf gedefinieerd. 
-    Dus het ik er voor gekozen dat het niet mogelijk is weights te initieren vanuit de constructor """
+    Dus heb ik er voor gekozen dat het niet mogelijk is weights te initieren vanuit de constructor """
     def setWeights(self,weights):
         self.weights=weights
 
@@ -146,10 +146,19 @@ networkand=NeuronNetwork([NeuronLayer([neuronand])])
 n1=NeuronLayer([Neuron(),Neuron(),Neuron()])
 n2=NeuronLayer([Neuron(),Neuron(),Neuron()])
 n3=NeuronLayer([Neuron(),Neuron()])
-halfadder= NeuronNetwork([n1,n2,n3])
-halfadder.train(input2,input2_target_ha,10000)
-print(halfadder)
+n1.neurons[0].setWeights([0.0,0.1])
+n1.neurons[1].setWeights([0.2,0.3])
+n1.neurons[2].setWeights([0.4,0.5])
+n3.neurons[0].setWeights([0.6,0.7,0.8])
+n3.neurons[1].setWeights([0.9,1.0,1.1])
+
+
+
+halfadder= NeuronNetwork([n1,n3])
 print(halfadder.feedForward([1,1]))
+#halfadder.train(input2,input2_target_ha,10000)
+print(halfadder)
+
 #networkand.train(input2,input2_target_and,5000)
 #print(networkand)
 #print(networkand.feedForward([1,1]))
