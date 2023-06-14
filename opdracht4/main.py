@@ -128,7 +128,9 @@ class NeuronNetwork(object):
                     errorlist = j.calculateErrors(errorlist,target[i])
                 for j in reversed(self.layers):
                     j.updateNeurons()
-            print(p,"/",epochs,"epochs ",)
+            
+            print((p+1),"/",epochs,"epochs ")
+        return self
 
 
 
@@ -158,14 +160,15 @@ n3.neurons[1].setWeights([0.9,1.0,1.1])
 
 
 halfadder= NeuronNetwork([n1,n3])
-print(halfadder.feedForward([1,1]))
+#print(halfadder.feedForward([1,1]))
+print(halfadder.train([[1,1]],[[0,1]],1))
 #halfadder.train(input2,input2_target_ha,10000)
-print(halfadder)
+#print(halfadder)
 
 #networkand.train(input2,input2_target_and,5000)
 #print(networkand)
 #print(networkand.feedForward([1,1]))
-seed(1667889)
+#seed(1667889)
 
 """ iris = load_iris()
 st_and_vc =iris.data[0:100]
