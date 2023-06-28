@@ -11,7 +11,7 @@ class Neuron(object):
         self.error = float(0)
         self.input = []
         self.w_x_wdelta= []
-        self.n = float(0.10)     #correction step
+        self.n = float(1)     #correction step
         self.name=name
     
     """ Als je een default lijst meegeeft in de initiatie parameters, word deze gedeeld tussen alle objecten die geen lijst meekrijgen.
@@ -36,7 +36,7 @@ class Neuron(object):
         #fill weightdelta list
         for i in self.weights:
             self.w_x_wdelta.append(i*self.error)
-        print(self.name," has error of: ",self.error)
+        #print(self.name," has error of: ",self.error)
         return self.w_x_wdelta
     #update function
     def update(self):
@@ -46,6 +46,7 @@ class Neuron(object):
        
             self.weights[i] -= tt
         self.bias -= t
+        #print(self.name," has updated weights: " ,self.weights, " and bias: ", self.bias)
         return 0
     
     #activation function which also fills the neuron with weights on the first call.        
@@ -67,7 +68,7 @@ class Neuron(object):
             dotproduct += input[i] * self.weights[i]
         #Sigmoid activation function
         self.output = 1 -(1/(1+math.e**(dotproduct+self.bias)))
-        print(self.output)
+        #print(self.output)
         return self.output
 
     def __str__(self):
@@ -151,6 +152,8 @@ input1 = [[1],[0]]
 input2 = [[1,1],[1,0],[0,1],[0,0]]
 input2_target_ha = [[0,1],[1,0],[1,0],[0,0]]
 input2_target_and = [[1],[0],[0],[0]]
+input2_target_xor = [[0],[1],[1],[0]]
+
 input3 = [[1,1,1],[1,1,0],[1,0,1],[1,0,0],[0,1,1],[0,1,0],[0,0,1],[0,0,0]]
 
 n1=NeuronLayer([Neuron("f"),Neuron("g"),Neuron("h")])
@@ -161,47 +164,48 @@ n1.neurons[1].setWeights([0.2,0.3])
 n1.neurons[2].setWeights([0.4,0.5])
 n3.neurons[0].setWeights([0.6,0.7,0.8])
 n3.neurons[1].setWeights([0.9,1.0,1.1])
-
-
-
 halfadder= NeuronNetwork([n1,n3])
-#print(halfadder.feedForward([1,1]))
-print(halfadder.train(input2,input2_target_ha,100))
-print(halfadder.feedForward([1,1]))
+andlayer=NeuronLayer([Neuron("and")])
+andgate = NeuronNetwork([andlayer])
+andgate.train(input2,input2_target_and,1000)
+xorlayer1 = NeuronLayer([Neuron("andi1"),Neuron("andi2")])
+xorlayer2 = NeuronLayer([Neuron("or")])
+xorgate = NeuronNetwork([xorlayer1, xorlayer2])
+xorgate.train(input2,input2_target_xor,1000)
+
+
+halfadder.train(input2,input2_target_ha,1000)
+
+print("output and with 1,1: ",andgate.feedForward([1,1]))
+print("output and with 0,1: ",andgate.feedForward([1,0]))
+print("output and with 1,0: ",andgate.feedForward([0,1]))
+print("output and with 0,0: ",andgate.feedForward([0,0]))
+
+print("output xor with 1,1: ",xorgate.feedForward([1,1]))
+print("output xor with 0,1: ",xorgate.feedForward([1,0]))
+print("output xor with 1,0: ",xorgate.feedForward([0,1]))
+print("output xor with 0,0: ",xorgate.feedForward([0,0]))
+
+print("output ha with 1,1: ",halfadder.feedForward([1,1]))
+print("output ha with 0,1: ",halfadder.feedForward([0,1]))
+print("output ha with 1,0: ",halfadder.feedForward([1,0]))
+print("output ha with 0,0: ",halfadder.feedForward([0,0]))
 #halfadder.train(input2,input2_target_ha,10000)
 #print(halfadder)
 
 #networkand.train(input2,input2_target_and,5000)
 #print(networkand)
 #print(networkand.feedForward([1,1]))
-#seed(1667889)
+seed(1667889)
 
-""" iris = load_iris()
-st_and_vc =iris.data[0:100]
-st_and_vc_t = iris.target[0:100]
-vc_and_vg = iris.data[50:150]
-vc_and_vg_t = iris.target[50:150]
-#normalize target
-for i in range(len(vc_and_vg_t)):
-    vc_and_vg_t[i] -=1
+iris = load_iris()
+iris_d =iris.data
+iris_t = iris.target
+irislayer1=NeuronLayer([Neuron("n1"),Neuron("n2"),Neuron("n3"),Neuron("n4")])
+irislayer2=NeuronLayer([Neuron("o1"),Neuron("o2"),Neuron("o3")])
+irisnetwork= NeuronNetwork([irislayer1,irislayer2])
+irisnetwork.train(iris_d,iris_t,1000)
+print(irisnetwork.feedForward(iris_d[0]))
 
-vcvg_irisneuron= Neuron(bias=randint(-2,2))
-stvc_irisneuron= Neuron(bias=randint(-2,2)) """
 
-""" train(100,neuronand,andtestinput,andresult)
-print("3A: And:")
-print(neuronand)
 
-train(100,neuronxor,xortestinput,xorresult)
-print("3B: Xor:")
-print(neuronxor)
-
-train(100,stvc_irisneuron,st_and_vc,st_and_vc_t)
-print("3CI:")
-print(stvc_irisneuron)
-
-train(100,vcvg_irisneuron,vc_and_vg,vc_and_vg_t)
-print("3CII:")
-print(vcvg_irisneuron)
-
- """
