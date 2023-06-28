@@ -4,14 +4,15 @@ import numpy as np
 import math
 
 class Neuron(object):
-    def __init__(self,bias =float(0)):
+    def __init__(self,name,bias =float(0)):
         self.weights = []
         self.bias = bias
         self.output = 0
         self.error = float(0)
         self.input = []
-        self.wdelta= []
-        self.n = float(0.15)     #correction step
+        self.w_x_wdelta= []
+        self.n = float(0.10)     #correction step
+        self.name=name
     
     """ Als je een default lijst meegeeft in de initiatie parameters, word deze gedeeld tussen alle objecten die geen lijst meekrijgen.
     Zodoende worden de weights dan door alle neuronen gebruikt tenzij vooraf gedefinieerd. 
@@ -19,52 +20,58 @@ class Neuron(object):
     def setWeights(self,weights):
         self.weights=weights
 
-#calculating the error
+    #calculating the error
     def calcError(self,prev_error,target=0):
-        self.wdelta.clear()
+        self.w_x_wdelta.clear()
         # Error calculation for a hidden layer
         if prev_error:
-            tempsum=0
-            for i in prev_error:
-                tempsum += i
-            tempsum = tempsum/len(prev_error)
-            self.error = self.output*(1-self.output)*tempsum
+            sum_weight_deltas = 0 
+            
+            for i in range(len(prev_error)):
+                sum_weight_deltas += prev_error[i]
+            self.error = self.output*(1-self.output)*sum_weight_deltas
         # Error calculation for output layer
         else:
             self.error  = self.output*(1-self.output)*(-1*(target-self.output))
         #fill weightdelta list
-        for i in self.input:
-            self.wdelta.append(i*self.error*self.n)
-        return self.error
- #update function
+        for i in self.weights:
+            self.w_x_wdelta.append(i*self.error)
+        print(self.name," has error of: ",self.error)
+        return self.w_x_wdelta
+    #update function
     def update(self):
+        t = self.error*self.n
         for i in range(len(self.weights)):
-            self.weights[i] -= self.wdelta[i]
-        self.bias -= self.n * self.error
+            tt = t*self.input[i]
+       
+            self.weights[i] -= tt
+        self.bias -= t
         return 0
- #activation function which also fills the neuron with weights on the first call.        
+    
+    #activation function which also fills the neuron with weights on the first call.        
     def act_fn(self,input):
         self.input = input
-        dotproduct = int(0)
+        dotproduct = 0
         self.output = 0
         #Match the amount of weights to the amount of inputs.
-        temp = len(input) - len(self.weights)
+        wlcheck = len(input) - len(self.weights)
         seed(1667889)
         #fill the weightlist with random weights
-        while temp > 0 :
+        while wlcheck > 0 :
             self.weights.append(randint(-2,2))
-            if temp == 1:
+            if wlcheck == 1:
                 self.bias = randint(-2,2)
-            temp -= 1
+            wlcheck -= 1
         #Calculate the dotproduct
         for i in range(len(input)):
             dotproduct += input[i] * self.weights[i]
         #Sigmoid activation function
         self.output = 1 -(1/(1+math.e**(dotproduct+self.bias)))
+        print(self.output)
         return self.output
 
     def __str__(self):
-        return "Neuron with weights: "+ str(self.weights) + " and bias: " + str(self.bias)
+        return "Neuron "+str(self.name)+" with weights: "+ str(self.weights) + " and bias: " + str(self.bias)
 
 class NeuronLayer(object):
     def __init__(self, neurons):
@@ -84,11 +91,15 @@ class NeuronLayer(object):
     def calculateErrors(self,errorlist,target):
         next_errorlist = []
         if errorlist:
+            #easy transpose to get the correct weightpairs to the corresponding neuron
+            np_errorlist=np.asarray(errorlist)
+            np_errorlist = np_errorlist.transpose()
+            t_errorlist = np_errorlist.tolist()
             for i in range(len(self.neurons)):
-                next_errorlist.append(self.neurons[i].calcError(errorlist)) 
+                next_errorlist.append(self.neurons[i].calcError(t_errorlist[i])) 
         else:
             for i in range(len(self.neurons)):
-                next_errorlist.append(self.neurons[i].calcError(errorlist,target[i])) 
+                next_errorlist.append(self.neurons[i].calcError(errorlist,target[i]))
         return next_errorlist
 
     def calcLoss(self,errorlist):
@@ -99,7 +110,7 @@ class NeuronLayer(object):
         return mse
  
     def updateNeurons(self):
-        for i in reversed(self.neurons):
+        for i in self.neurons:
             i.update()
         return 0
 
@@ -142,15 +153,9 @@ input2_target_ha = [[0,1],[1,0],[1,0],[0,0]]
 input2_target_and = [[1],[0],[0],[0]]
 input3 = [[1,1,1],[1,1,0],[1,0,1],[1,0,0],[0,1,1],[0,1,0],[0,0,1],[0,0,0]]
 
-neuronand = Neuron()
-neuronnot = Neuron()
-neuronor = Neuron()
-neuronnor = Neuron()
-networkand=NeuronNetwork([NeuronLayer([neuronand])])
-
-n1=NeuronLayer([Neuron(),Neuron(),Neuron()])
-n2=NeuronLayer([Neuron(),Neuron(),Neuron()])
-n3=NeuronLayer([Neuron(),Neuron()])
+n1=NeuronLayer([Neuron("f"),Neuron("g"),Neuron("h")])
+n2=NeuronLayer([Neuron("n2-1"),Neuron("n2-2"),Neuron("n2-3")])
+n3=NeuronLayer([Neuron("s"),Neuron("c")])
 n1.neurons[0].setWeights([0.0,0.1])
 n1.neurons[1].setWeights([0.2,0.3])
 n1.neurons[2].setWeights([0.4,0.5])
@@ -161,7 +166,8 @@ n3.neurons[1].setWeights([0.9,1.0,1.1])
 
 halfadder= NeuronNetwork([n1,n3])
 #print(halfadder.feedForward([1,1]))
-print(halfadder.train([[1,1]],[[0,1]],1))
+print(halfadder.train(input2,input2_target_ha,100))
+print(halfadder.feedForward([1,1]))
 #halfadder.train(input2,input2_target_ha,10000)
 #print(halfadder)
 
