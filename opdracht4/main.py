@@ -1,10 +1,11 @@
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_iris,load_digits
+import sklearn.preprocessing as skpre
 from random import seed,randint
 import numpy as np
 import math
 
 class Neuron(object):
-    def __init__(self,name,bias =float(0)):
+    def __init__(self,name="",bias =float(0)):
         self.weights = []
         self.bias = bias
         self.output = 0
@@ -156,8 +157,8 @@ input2_target_xor = [[0],[1],[1],[0]]
 
 input3 = [[1,1,1],[1,1,0],[1,0,1],[1,0,0],[0,1,1],[0,1,0],[0,0,1],[0,0,0]]
 
+# Network creation for half adder network.
 n1=NeuronLayer([Neuron("f"),Neuron("g"),Neuron("h")])
-n2=NeuronLayer([Neuron("n2-1"),Neuron("n2-2"),Neuron("n2-3")])
 n3=NeuronLayer([Neuron("s"),Neuron("c")])
 n1.neurons[0].setWeights([0.0,0.1])
 n1.neurons[1].setWeights([0.2,0.3])
@@ -167,14 +168,66 @@ n3.neurons[1].setWeights([0.9,1.0,1.1])
 halfadder= NeuronNetwork([n1,n3])
 andlayer=NeuronLayer([Neuron("and")])
 andgate = NeuronNetwork([andlayer])
-andgate.train(input2,input2_target_and,1000)
 xorlayer1 = NeuronLayer([Neuron("andi1"),Neuron("andi2")])
 xorlayer2 = NeuronLayer([Neuron("or")])
 xorgate = NeuronNetwork([xorlayer1, xorlayer2])
+
+#prepping the iris dataset
+iris = load_iris()
+iris_d =iris.data
+iris_t = iris.target
+irislayer1=NeuronLayer([Neuron("n1"),Neuron("n2"),Neuron("n3"),Neuron("n4")])
+irislayer2=NeuronLayer([Neuron("o1"),Neuron("o2"),Neuron("o3")])
+#opted for two layers, corresponding with the four inputs and the three different classes as output. 
+irisnetwork= NeuronNetwork([irislayer1,irislayer2])
+#Changing target data to correspond to [x,y,z] output, figured out later onehotencoder is a thing.
+temp = []
+for i in iris_t:
+
+    if i == 0:
+        temp.append([1,0,0])
+    
+    if i == 1:
+        temp.append([0,1,0])
+    
+    if i == 2:
+        temp.append([0,0,1])
+  
+iris_t= np.asarray(temp) 
+iris_d = iris_d.tolist()
+iris_t= iris_t.tolist()
+
+#prepping the digit dataset
+digits = load_digits()
+digit_d= digits.data
+digit_t = digits.target
+digitlayer1=NeuronLayer([])
+digitlayer2=NeuronLayer([])
+digitlayer3=NeuronLayer([])
+for i in range(64):
+    digitlayer1.neurons.append(Neuron())
+for i in range(32):
+    digitlayer2.neurons.append(Neuron())
+for i in range(16):
+    digitlayer3.neurons.append(Neuron())
+digitlayeroutput=NeuronLayer([Neuron("o1"),Neuron("o2"),Neuron("o3"),Neuron("o4"),Neuron("o5"),Neuron("o6"),Neuron("o7"),Neuron("o8")])
+digitnetwork = NeuronNetwork([digitlayer1,digitlayer2,digitlayer3,digitlayeroutput])
+one_hot_encoder = skpre.OneHotEncoder(sparse=False)
+digit_t=digit_t.reshape(-1,1)
+one_hot_encoder.fit(digit_t)
+digit_t= one_hot_encoder.transform(digit_t)
+digitnetwork.train(digit_d,digit_t,1000)
+print(digitnetwork.feedForward(digit_d[200]))
+print(digit_t[200])
+print(digitnetwork.feedForward(digit_d[1600]))
+print(digit_t[1600])
+print(digitnetwork.feedForward(digit_d[855]))
+print(digit_t[855])
+#train the gates
+""" andgate.train(input2,input2_target_and,1000)
 xorgate.train(input2,input2_target_xor,1000)
-
-
 halfadder.train(input2,input2_target_ha,1000)
+irisnetwork.train(iris_d,iris_t,1000)
 
 print("output and with 1,1: ",andgate.feedForward([1,1]))
 print("output and with 0,1: ",andgate.feedForward([1,0]))
@@ -190,22 +243,13 @@ print("output ha with 1,1: ",halfadder.feedForward([1,1]))
 print("output ha with 0,1: ",halfadder.feedForward([0,1]))
 print("output ha with 1,0: ",halfadder.feedForward([1,0]))
 print("output ha with 0,0: ",halfadder.feedForward([0,0]))
-#halfadder.train(input2,input2_target_ha,10000)
-#print(halfadder)
 
-#networkand.train(input2,input2_target_and,5000)
-#print(networkand)
-#print(networkand.feedForward([1,1]))
-seed(1667889)
 
-iris = load_iris()
-iris_d =iris.data
-iris_t = iris.target
-irislayer1=NeuronLayer([Neuron("n1"),Neuron("n2"),Neuron("n3"),Neuron("n4")])
-irislayer2=NeuronLayer([Neuron("o1"),Neuron("o2"),Neuron("o3")])
-irisnetwork= NeuronNetwork([irislayer1,irislayer2])
-irisnetwork.train(iris_d,iris_t,1000)
-print(irisnetwork.feedForward(iris_d[0]))
-
+print(irisnetwork.feedForward(iris_d[15]))
+print(iris_t[15])
+print(irisnetwork.feedForward(iris_d[75]))
+print(iris_t[75])
+print(irisnetwork.feedForward(iris_d[125]))
+print(iris_t[125]) """
 
 
