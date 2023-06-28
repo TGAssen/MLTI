@@ -74,7 +74,7 @@ class NeuronLayer(object):
         for i in self.neurons:
             print(i)
         return "end of layer"
-
+    #Method that activates each neurons activation function and returns a list with each output.
     def passOn(self,input):
         output=[]
         for j in self.neurons:
