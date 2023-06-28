@@ -224,7 +224,7 @@ print(digit_t[1600])
 print(digitnetwork.feedForward(digit_d[855]))
 print(digit_t[855])
 #train the gates
-""" andgate.train(input2,input2_target_and,1000)
+andgate.train(input2,input2_target_and,1000)
 xorgate.train(input2,input2_target_xor,1000)
 halfadder.train(input2,input2_target_ha,1000)
 irisnetwork.train(iris_d,iris_t,1000)
@@ -245,11 +245,16 @@ print("output ha with 1,0: ",halfadder.feedForward([1,0]))
 print("output ha with 0,0: ",halfadder.feedForward([0,0]))
 
 
-print(irisnetwork.feedForward(iris_d[15]))
-print(iris_t[15])
-print(irisnetwork.feedForward(iris_d[75]))
-print(iris_t[75])
-print(irisnetwork.feedForward(iris_d[125]))
-print(iris_t[125]) """
+print("output of iris at pos 15: ",irisnetwork.feedForward(iris_d[15]))
+print("target of pos 15: ",iris_t[15])
+print("output of iris at pos 75: ",irisnetwork.feedForward(iris_d[75]))
+print("target of pos 75: ",iris_t[75])
+print("output of iris at pos 125: ",irisnetwork.feedForward(iris_d[125]))
+print("target of pos 125: ",iris_t[125])
 
-
+print("output of digit at pos 200: ",digitnetwork.feedForward(digit_d[200]))
+print("target of pos 200: ",digit_t[200])
+print("output of digit at pos 1600: ",digitnetwork.feedForward(digit_d[1600]))
+print("target of pos 1600: ",digit_t[1600])
+print("output of digit at pos 855: ",digitnetwork.feedForward(digit_d[855]))
+print("target of pos 855: ",digit_t[855])
